@@ -1,12 +1,25 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../redux/action";
+import { useDispatch } from "react-redux";
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch  = useDispatch();
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+  
+
+  const handleLogout = () => {
+    // Clear any authentication information here (e.g., remove token or user data)
+    localStorage.removeItem("userToken");  // Assuming you're using localStorage for token storage
+
+    // Redirect to the login/signup page after logging out
+    dispatch(logout());
+    navigate("/");
+  };
 
   return (
     <nav className="bg-black text-white flex items-center justify-between p-4 fixed w-full top-0 z-10">
@@ -63,7 +76,12 @@ const Navbar = () => {
           <div className="absolute right-0 mt-2 w-48 bg-black text-white shadow-lg rounded-md">
             <button className="block w-full px-4 py-2 text-left hover:bg-gray-600">My Account</button>
             <button className="block w-full px-4 py-2 text-left hover:bg-gray-600">Settings</button>
-            <button className="block w-full px-4 py-2 text-left hover:bg-gray-600">Logout</button>
+            <button
+              onClick={handleLogout}  // Logout functionality
+              className="block w-full px-4 py-2 text-left hover:bg-gray-600"
+            >
+              Logout
+            </button>
           </div>
         )}
       </div>
@@ -81,4 +99,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-    

@@ -1,25 +1,28 @@
-// src/App.js
 import React from "react";
-import Navbar from "./components/Navbar";
-import WhatsHotToday from "./components/WhatsHotToday";
-import HowItWorks from "./components/HowItWorks";
-import MaximizeReach from "./components/MaximizeReach";
-import UploadSection from "./components/UploadSection";
-import Footer from "./components/Footer";
+import { Routes, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
+import LoginSignup from "./components/loginsignup";
+import Home from "./Home";  // Import your Home component
+import { selectIsAuthenticated } from "./redux/selector";  // Import the selector to check if the user is authenticated
 
-const App = () => {
+function App() {
+  const isAuthenticated = useSelector(selectIsAuthenticated);  // Get authentication state
+
   return (
-    <div className="min-h-screen bg-[#111827] text-white">
-      <Navbar />
-      <main className="pt-16"> {/* Add padding-top to prevent overlap */}
-        <WhatsHotToday />
-        <HowItWorks />
-        <MaximizeReach />
-        <UploadSection />
-      </main>
-      <Footer />
-    </div>
+    <Routes>
+      {/* If the user is authenticated, redirect to /home, otherwise show LoginSignup */}
+      <Route 
+        path="/" 
+        element={isAuthenticated ? <Home /> : <LoginSignup />} 
+      />
+
+      {/* Only show Home route if user is authenticated */}
+      <Route 
+        path="/home" 
+        element={isAuthenticated ? <Home /> : <LoginSignup />} 
+      />
+    </Routes>
   );
-};
+}
 
 export default App;
