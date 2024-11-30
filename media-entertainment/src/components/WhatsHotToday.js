@@ -1,18 +1,22 @@
-// src/components/WhatsHotToday.js
 import React from "react";
 import ChartCard from "./ChartCard";
+import { useNavigate } from "react-router-dom"; // Ensure this is imported for navigation
 
 const WhatsHotToday = () => {
-  // Mock data for demonstration (can be dynamic based on your backend)
+  const navigate = useNavigate(); // Hook for navigation
+
   const chartData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May"],
     data: [12, 19, 3, 5, 2],
   };
 
   const handleChartClick = (platform) => {
-    alert(`You clicked on the ${platform} chart!`);
-    // You can redirect to a detailed page or show more data based on platform
+    if (platform === "Instagram") navigate("/trending-instagram");
+    else if (platform === "Twitter") navigate("/trending-twitter");
+    else if (platform === "Facebook") navigate("/trending-facebook");
+    else if (platform === "YouTube") navigate("/trending-youtube");
   };
+
 
   return (
     <section className="text-center py-12">
@@ -27,4 +31,4 @@ const WhatsHotToday = () => {
   );
 };
 
-export default WhatsHotToday;
+export default WhatsHotToday; // Ensure this is a default export

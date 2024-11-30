@@ -4,8 +4,9 @@ import twitterLogo from "../img/x.jpg";
 import youtubeLogo from "../img/youtube.png";
 import facebookLogo from "../img/facebook.png";
 
+
 const Footer = () => (
-  <footer className="bg-[#111827] text-white py-8">
+  <footer className="bg-[#000000] text-white py-8">
     <div
       className="flex flex-col items-center text-center"
       style={{ fontFamily: "Montserrat, sans-serif", opacity: 0.8 }}

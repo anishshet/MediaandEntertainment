@@ -20,7 +20,7 @@ const UploadSection = () => {
   };
 
   return (
-    <div className="w-full bg-[#1F2937] py-16 px-4">
+    <div className="w-full bg-[#111827] py-16 px-4">
       <h2 className="text-5xl font-bold text-white text-center mb-8 animate-fade-in">
         Upload Your Content
       </h2>
@@ -28,7 +28,7 @@ const UploadSection = () => {
         {platforms.map(({ name, logo, color }) => (
           <div
             key={name}
-            className="bg-[#111827] p-6 rounded-lg text-center shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl duration-300"
+            className="bg-[#1F2937] p-6 rounded-lg text-center shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl duration-300"
           >
             <img
               src={logo}

@@ -30,8 +30,8 @@ const Navbar = () => {
 
       {/* Center Section - About and Contact Us */}
       <div className="hidden md:flex flex-grow justify-center text-center">
+        <Link to="/home" className="mx-6 hover:text-gray-400">Home</Link>
         <Link to="/about" className="mx-6 hover:text-gray-400">About</Link>
-        <Link to="/contact" className="mx-6 hover:text-gray-400">Contact Us</Link>
       </div>
 
       {/* Mobile Menu Button */}
@@ -74,8 +74,7 @@ const Navbar = () => {
         {/* Dropdown Menu */}
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-black text-white shadow-lg rounded-md">
-            <button className="block w-full px-4 py-2 text-left hover:bg-gray-600">My Account</button>
-            <button className="block w-full px-4 py-2 text-left hover:bg-gray-600">Settings</button>
+            
             <button
               onClick={handleLogout}  // Logout functionality
               className="block w-full px-4 py-2 text-left hover:bg-gray-600"
