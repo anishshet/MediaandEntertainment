@@ -1,8 +1,12 @@
 from flask import Flask, jsonify, send_from_directory
+from flask_cors import CORS
 import pandas as pd
 import os
 
 app = Flask(__name__, static_folder="build")
+
+# Initialize CORS
+CORS(app)
 
 # Load the data
 file_path = r"F:\PROJECTS\MediaandEntertainment\media-entertainment\src\csv\instagram.csv"
@@ -37,6 +41,87 @@ def time_series():
         return jsonify(time_series)
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+# Music Genre
+@app.route('/api/music_genre')
+def music_genre():
+    try:
+        music_genre = data['Music Genre'].to_dict()
+        return jsonify(music_genre)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Video length
+@app.route('/api/video_len')
+def video_len():
+    try:
+        video_len = data['Video length in S'].to_dict()
+        return jsonify(video_len)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+# Part of Song
+@app.route('/api/song_part')
+def part_of_song():
+    try:
+        part_of_song = data['Part of Song'].to_dict()
+        return jsonify(part_of_song)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Theme
+@app.route('/api/theme')
+def theme():
+    try:
+        theme = data['Theme'].to_dict()
+        return jsonify(theme)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+# Video Style
+@app.route('/api/video_style')
+def video_style():
+    try:
+        video_style = data['Video Style'].to_dict()
+        return jsonify(video_style)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Music
+@app.route('/api/music')
+def music():
+    try:
+        music = data['Music'].to_dict()
+        return jsonify(music)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Trend Type
+@app.route('/api/trend_type')
+def trend_type():
+    try:
+        trend_type = data['Trend Type'].to_dict()
+        return jsonify(trend_type)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Trend
+@app.route('/api/trend')
+def trend():
+    try:
+        trend = data['Trend'].to_dict()
+        return jsonify(trend)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Month
+@app.route('/api/month')
+def month():
+    try:
+        month = data['Month'].to_dict()
+        return jsonify(month)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # Route to serve React frontend
 @app.route("/", defaults={"path": ""})
@@ -46,6 +131,9 @@ def serve_react(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, "index.html")
+
+
+
 
 # Handle favicon.ico
 @app.route('/favicon.ico')

@@ -9,6 +9,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarEleme
 function TrendingInstagram() {
   const [summaryData, setSummaryData] = useState(null);
   const [timeSeriesData, setTimeSeriesData] = useState(null);
+  const [musicGenreData, setMusicGenreData] = useState(null); // Added music genre state
   const [loading, setLoading] = useState(true); // Added loading state
 
   useEffect(() => {
@@ -20,7 +21,12 @@ function TrendingInstagram() {
     // Fetch time-series data
     axios.get("http://127.0.0.1:5000/api/time_series")
       .then(response => setTimeSeriesData(response.data))
-      .catch(error => console.error("Error fetching time-series data:", error))
+      .catch(error => console.error("Error fetching time-series data:", error));
+
+    // Fetch music genre datasummary
+    axios.get("http://127.0.0.1:5000/api/music_genre")
+      .then(response => setMusicGenreData(response.data))
+      .catch(error => console.error("Error fetching music genre data:", error))
       .finally(() => setLoading(false)); // End loading state when data is fetched
   }, []);
 
@@ -38,7 +44,7 @@ function TrendingInstagram() {
     ],
   };
 
-  // Prepare chart data for bar chart
+  // Prepare chart data for bar chart (summary data)
   const barChartData = {
     labels: Object.keys(summaryData || {}),
     datasets: [
@@ -47,6 +53,20 @@ function TrendingInstagram() {
         data: Object.values(summaryData || {}).map(item => item['mean']),
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Prepare chart data for bar chart (music genre)
+  const musicGenreChartData = {
+    labels: Object.keys(musicGenreData || {}),
+    datasets: [
+      {
+        label: 'Number of Trends by Music Genre',
+        data: Object.values(musicGenreData || {}),
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        borderColor: 'rgba(255, 159, 64, 1)',
         borderWidth: 1,
       },
     ],
@@ -78,6 +98,12 @@ function TrendingInstagram() {
           <h2 className="text-xl font-semibold mb-4">Video Length by Music Genre</h2>
           {summaryData && <Bar data={barChartData} />}
         </div>
+      </div>
+
+      {/* Bar Chart: Number of Trends by Music Genre */}
+      <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+        <h2 className="text-xl font-semibold mb-4">Number of Trends by Music Genre</h2>
+        {musicGenreData && <Bar data={musicGenreChartData} />}
       </div>
     </div>
   );
