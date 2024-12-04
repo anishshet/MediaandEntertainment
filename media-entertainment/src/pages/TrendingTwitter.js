@@ -1,161 +1,201 @@
-// src/components/TrendingInstagram.js
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { Line, Pie } from "react-chartjs-2";
+import React, { useState } from "react";
+import { Line, Bar, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
+// Register chart components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+const AnalyticsDashboard = () => {
+  const [loading, setLoading] = useState(false);
 
-// Mock data (replace with your scraped Instagram data)
-const trendsData = [
-  { hashtag: "#trending1", count: 1200 },
-  { hashtag: "#viral", count: 950 },
-  { hashtag: "#instalife", count: 830 },
-];
+  // Simulated data
+  const topTrends = [
+    ["#Crypto", 150],
+    ["#TechNews", 120],
+    ["#AIRevolution", 95],
+    ["#ClimateChange", 80],
+    ["#MusicLovers", 60],
+  ];
 
-// Mock data for audios and tags
-const trendingAudios = [
-  { name: "Audio 1", count: 320 },
-  { name: "Audio 2", count: 280 },
-  { name: "Audio 3", count: 230 },
-];
+  const summaryData = {
+    "Video 1": { mean: 60 },
+    "Video 2": { mean: 45 },
+    "Video 3": { mean: 70 },
+    "Video 4": { mean: 50 },
+    "Video 5": { mean: 65 },
+  };
 
-const trendingTags = [
-  { tag: "#fun", posts: 5000 },
-  { tag: "#reels", posts: 4500 },
-  { tag: "#music", posts: 4000 },
-];
+  const timeSeriesData = {
+    "Jan": 50,
+    "Feb": 55,
+    "Mar": 60,
+    "Apr": 52,
+    "May": 65,
+    "Jun": 70,
+    "Jul": 75,
+    "Aug": 80,
+    "Sep": 85,
+    "Oct": 90,
+    "Nov": 95,
+    "Dec": 100,
+  };
 
-// Line Chart Data (for Bigger Chart)
-const lineChartData = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-  datasets: [
-    {
-      label: "Mentions Over Time",
-      data: [500, 600, 700, 800, 900, 1000],
-      fill: true,
-      borderColor: "rgba(75, 192, 192, 1)",
-      tension: 0.4,
-      borderWidth: 2,
+  const musicGenreData = {
+    "Pop": 30,
+    "Hip-hop": 25,
+    "Rock": 15,
+    "Jazz": 10,
+    "Classical": 20,
+  };
+
+  // Calculate total for percentages
+  const totalTrends = topTrends.reduce((sum, [, count]) => sum + count, 0);
+
+  // Prepare chart data for line chart (time-series data)
+  const lineChartData = {
+    labels: Object.keys(timeSeriesData),
+    datasets: [
+      {
+        label: "Average Video Length (Seconds)",
+        data: Object.values(timeSeriesData),
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+      },
+    ],
+  };
+
+  // Prepare chart data for bar chart (summary data)
+  const barChartData = {
+    labels: Object.keys(summaryData),
+    datasets: [
+      {
+        label: "Video Length Summary",
+        data: Object.values(summaryData).map((item) => item.mean),
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Prepare chart data for bar chart (music genre data)
+  const musicGenreChartData = {
+    labels: Object.keys(musicGenreData),
+    datasets: [
+      {
+        label: "Number of Trends by Music Genre",
+        data: Object.values(musicGenreData),
+        backgroundColor: "rgba(255, 159, 64, 0.2)",
+        borderColor: "rgba(255, 159, 64, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Prepare chart data for pie chart (trend type distribution)
+  const pieChartData = {
+    labels: topTrends.map(([trend]) => trend),
+    datasets: [
+      {
+        label: "Trend Type Percentage",
+        data: topTrends.map(([, count]) => ((count / totalTrends) * 100).toFixed(2)),
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(255, 159, 64, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+        ],
+        borderColor: [
+          "rgba(75, 192, 192, 1)",
+          "rgba(255, 99, 132, 1)",
+          "rgba(255, 159, 64, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(153, 102, 255, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const pieChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          color: "white",
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.label}: ${context.raw}%`;
+          },
+        },
+      },
     },
-  ],
-};
+  };
 
-// Pie Chart Data
-const pieChartData = {
-  labels: ["#trending1", "#viral", "#instalife"],
-  datasets: [
-    {
-      label: "Hashtag Mentions",
-      data: [1200, 950, 830],
-      backgroundColor: ["rgba(255, 99, 132, 0.5)", "rgba(54, 162, 235, 0.5)", "rgba(255, 206, 86, 0.5)"],
-      borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)"],
-      borderWidth: 1,
-    },
-  ],
-};
-
-const TrendingTwitter = () => {
-  const navigate = useNavigate();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex justify-center items-center">
+        <h2 className="text-2xl font-semibold">Loading data...</h2>
+      </div>
+    );
+  }
 
   return (
-    <>
-      {/* Navbar */}
-      <Navbar />
-      <div className="min-h-screen bg-[#1F2937] text-white p-8">
-        <button
-          onClick={() => navigate(-1)} // Navigate back
-          className="bg-blue-500 px-4 py-2 rounded mb-6"
-        >
-          Back
-        </button>
+    <div className="min-h-screen bg-gray-900 text-white py-8 px-4">
+      <h1 className="text-4xl font-bold mb-8 text-center">Twitter Analytics Dashboard</h1>
 
-        <h1 className="text-4xl font-bold mb-8">Trending on Twitter</h1>
-
-        {/* Trend Cards Section (4 charts in a row) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          {trendsData.map((trend, index) => (
-            <div
-              key={index}
-              className="p-6 bg-[#374151] rounded-lg shadow-lg hover:shadow-xl transition duration-300"
-            >
-              <h2 className="text-2xl font-semibold mb-2">{trend.hashtag}</h2>
-              <p className="text-gray-300">Mentions: {trend.count}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Top 5 Trends */}
+        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Top 5 Twitter Trends</h2>
+          {topTrends.map(([trend, count], index) => (
+            <div key={index} className="bg-gray-700 p-4 rounded-xl mb-4">
+              <h3 className="text-lg font-semibold text-white">
+                {index + 1}. {trend}
+              </h3>
+              <p className="text-gray-300">Count: {count}</p>
             </div>
           ))}
         </div>
 
-        {/* Bigger Chart (60%) and Pie Chart (40%) side by side */}
-        <div className="flex gap-8 mb-8">
-          {/* Bigger Chart - 60% width */}
-          <div className="p-6 bg-[#374151] rounded-lg shadow-lg w-3/5">
-            <h2 className="text-2xl font-semibold mb-4">Bigger Chart</h2>
-            {/* Line Chart with Animation */}
-            <Line data={lineChartData} options={{ responsive: true, animation: { duration: 1500 } }} />
-          </div>
-
-          {/* Pie Chart - 40% width */}
-          <div className="p-6 bg-[#374151] rounded-lg shadow-lg w-2/5">
-            <h2 className="text-2xl font-semibold mb-4">Pie Chart</h2>
-            {/* Pie Chart with Animation */}
-            <Pie data={pieChartData} options={{ responsive: true, animation: { duration: 1500 } }} />
+        {/* Pie Chart: Trend Type Percentage Distribution */}
+        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Trend Type Percentage Distribution</h2>
+          <div className="flex justify-center">
+            <div style={{ height: "500px", width: "500px" }}>
+              <Pie data={pieChartData} options={pieChartOptions} />
+            </div>
           </div>
         </div>
 
-        {/* Trending Audios Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {trendingAudios.map((audio, index) => (
-            <div
-              key={index}
-              className="p-6 bg-[#374151] rounded-lg shadow-lg hover:shadow-xl transition duration-300"
-            >
-              <h3 className="text-xl font-semibold mb-2">{audio.name}</h3>
-              <p className="text-gray-300">Plays: {audio.count}</p>
-            </div>
-          ))}
+        {/* Line Chart: Time-Series Analysis */}
+        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Average Video Length Over Time</h2>
+          <Line data={lineChartData} />
         </div>
 
-        {/* Trending Tags Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trendingTags.map((tag, index) => (
-            <div
-              key={index}
-              className="p-6 bg-[#374151] rounded-lg shadow-lg hover:shadow-xl transition duration-300"
-            >
-              <h3 className="text-xl font-semibold mb-2">{tag.tag}</h3>
-              <p className="text-gray-300">Posts: {tag.posts}</p>
-            </div>
-          ))}
+        {/* Bar Chart: Number of Trends by Music Genre */}
+        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Number of Trends by Music Genre</h2>
+          <Bar data={musicGenreChartData} />
+        </div>
+
+        {/* Bar Chart: Video Length Summary */}
+        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Video Length Summary</h2>
+          <Bar data={barChartData} />
         </div>
       </div>
-
-      {/* Footer */}
-      <Footer />
-    </>
+    </div>
   );
 };
 
-export default TrendingTwitter;
+export default AnalyticsDashboard;
